@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact{% endblock title %}
+{% block contactActive %}active{% endblock contactActive %}
+
+{% block body %}
+<div class='container'>
+    <form method='POST' action='/contact/' > {% csrf_token %}
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name='name' aria-describedby="emailHelp" required>
+        </div>
+        <div class='row'>
+            <div class="col-6">
+                <label for="phoneNo" class="form-label">Phone No</label>
+                <input type="tel" class="form-control" id="phoneNo" name='phoneNo' required>
+            </div>
+            <div class="col-6">
+                <label for="emailId" class="form-label">Email</label>
+                <input type="email" class="form-control" id="emailId" name='emailId' placeholder='abc@gmail.com' required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="issue" class="form-label">Your Issue..</label>
+            <textarea type="text" class="form-control" id="issue" name='issue' rows='4' cols='30' required ></textarea>
+        </div>
+        <div id="detailsHelp" name='detailsHelp' class="form-text">We'll never share your details with anyone else.</div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+      </form>
+
+
+</div>
+
+{% endblock body %}

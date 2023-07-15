@@ -1,6 +1,10 @@
 from django.shortcuts import render,HttpResponse
+from .models import Post
 
 def blogHome(request):
-    return HttpResponse('blog home')
+    allPosts = Post.objects.all()
+    return render(request,'blog/bloghome.html',{'allPosts':allPosts})
+
 def blogPost(request,slug):
-    return HttpResponse(f'blog post {slug}')
+    post = Post.objects.filter(slug=slug).first()
+    return render(request,'blog/blogpost.html',{'post':post})
