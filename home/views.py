@@ -3,9 +3,14 @@ from home.models import Contact
 from blog.models import Post
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate,login,logout
 
+
+# HTML pages
 def home(request):
-    return render(request,'home/home.html')
+    topPosts = Post.objects.order_by('-views')[0:3]
+    return render(request,'home/home.html',{'topPosts':topPosts})
+
 
 def contactUs(request):
     if(request.method=='POST'):
@@ -38,6 +43,7 @@ def search(request):
 
     return render(request,'home/search.html',{'allPosts':allPosts,'query':query})
 
+# Authentication APIs
 def handleSignUp(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -74,13 +80,28 @@ def handleSignUp(request):
         myuser.last_name = lname
         myuser.save()
         messages.success(request,'Your Account is created successfully')
-        return redirect('/')
+        return redirect('/login/')
     else:
         pass
     return render(request,'home/signup.html')
 
 def handleLogin(request):
+    if request.method == 'POST':
+        loginusername = request.POST['loginusername']
+        loginpassword = request.POST['loginpassword']
+
+        user = authenticate(username=loginusername,password=loginpassword)
+
+        if(user is not None):
+            login(request,user)
+            messages.success(request,'Logged In')
+            return redirect('/')
+        else : 
+            messages.error(request,'Invalid username or password')
+            return redirect('/')
     return render(request,'home/login.html')
 
 def handleLogout(request):
-    return render(request,'home/login.html')
+    logout(request)
+    messages.info(request,'Logged out')
+    return redirect('/')

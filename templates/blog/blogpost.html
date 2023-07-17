@@ -3,23 +3,117 @@
 {% block title %}Blog Post{% endblock title %}
 
 {% block body %}
-<div class='container my-3'>
+{% load static %}
+{% load humanize %}
+{% load getDict %}
+<div class='container my-3 border-bottom'>
     <div class="col-md-8">
-
         <article class="blog-post">
             <h2 class="display-5 link-body-emphasis mb-1">{{post.title}}</h2>
             <p class="blog-post-meta">{{post.timeStamp}} by <a href="#">{{post.author}}</a></p>
-            
-            <p>{{post.content}}</p>
-            
+            <b>{{post.views}} views</b>
+            <p>{{post.content|safe}}</p>
         </article>
-
-        <nav class="blog-pagination" aria-label="Pagination">
-            <a class="btn btn-outline-primary rounded-pill" href="#">Older</a>
-            <a class="btn btn-outline-secondary rounded-pill disabled">Newer</a>
-        </nav>
-
+       
     </div>
 </div>
+<div class="container mt-3">
+    <h3>{{countComments}} Comments</h3>
+    <div class='mt-3'>
+        {% if user.is_authenticated %}
+        <div class="row">
+            <div class="col-md-1">
+                <img src="/static/img/userIcon.jpg" class='w-75 mx-auto d-block rounded-circle border p-1'>
+            </div>
+            <div class='col-md-7'>
+                <form action="/blog/postComment" method="post"> {% csrf_token %}
+                    <textarea name="comment" id="comment" cols="10" rows="2" class='form-control'
+                        placeholder='Add Comment'></textarea>
+                    <input type="hidden" name="postSno" value="{{post.sno}}">
+                    <input type="hidden" name="parentSno" value="">
 
-{% endblock body %}
+                    <div class='mt-2'>
+                        <button type="submit" class='btn btn-primary rounded-pill'>Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            <span>Please Login to post comment..</span> <a href='/login/' class="btn btn-info">Login</a>
+        </div>
+        {% endif %}
+        {% for comment in comments %}
+        
+        <div class="row mt-3">
+            <div class="col-md-1">
+                <img src="/static/img/userIcon.jpg" class='mx-auto d-block w-50 rounded-circle border p-1' alt='user'>
+            </div>
+            <div class="col-md-7">
+                <div>
+                    <span>@<b>{{comment.user}}</b></span><span> {{comment.timeStamp|naturaltime}}</span>
+                </div>
+                <div class='mt-1 ms-1'>
+                    <span>{{comment.comment}}</span>
+                </div>
+                {% if user.is_authenticated %}
+                <button class='btn btn-outline-secondary rounded-pill mt-3' data-bs-toggle="collapse"
+                    data-bs-target="#reply{{comment.sno}}" aria-expanded="false"
+                    aria-controls="reply{{comment.sno}}">Reply</button>
+                {% endif %}
+                <!-- IF Reply Button is clicked reploy box will be displayed-->    
+                <div class="collapse mt-2" id="reply{{comment.sno}}">
+                    <div class="card card-body">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <img src="/static/img/userIcon.jpg"
+                                    class='w-100 mx-auto d-block rounded-circle border p-1'>
+                            </div>
+                            <div class='col-md-11'>
+                                <form action="/blog/postComment" method="post"> {% csrf_token %}
+                                    <textarea name="comment" id="comment" cols="10" rows="2" class='form-control'
+                                        placeholder='Reply Comment'></textarea>
+                                    <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                                    <input type="hidden" name="postSno" value="{{post.sno}}">
+                                    <div class='mt-2'>
+                                        <button type="submit" class='btn btn-primary rounded-pill'>Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IF Reples Button is clicked replies of that comment will be displayed-->
+           
+                <button class='btn btn-outline-secondary rounded-pill mt-3' data-bs-toggle="collapse"
+                    data-bs-target="#replies{{comment.sno}}" aria-expanded="false"
+                    aria-controls="replies{{comment.sno}}">Replies</button>
+                   
+                
+                {% for reply in replies|get_val:comment.sno %}
+          
+                        <div class="collapse mt-2" id="replies{{comment.sno}}">
+                            <div class="card card-body">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <img src="/static/img/userIcon.jpg" class='mx-auto d-block w-100 rounded-circle border p-1' alt='user'>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div>
+                                            <span>@<b>{{reply.user}}</b></span><span> {{reply.timeStamp|naturaltime}}</span>
+                                        </div>
+                                        <div class='mt-1 ms-1'>
+                                            <span>{{reply.comment}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% endblock body %}

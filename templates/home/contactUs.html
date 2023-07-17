@@ -4,7 +4,10 @@
 {% block contactActive %}active{% endblock contactActive %}
 
 {% block body %}
-<div class='container'>
+<div class='container mt-4 w-50'>
+    <div class='p-3 mb-2 bg-success-subtle rounded' style='max-width:fit-content;'>
+        <h3>Contact Us here..</h3>
+    </div>
     <form method='POST' action='/contact/' > {% csrf_token %}
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>

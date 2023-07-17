@@ -18,15 +18,15 @@
 <div class="container">
   
   <h3>Popular Blogs....</h3>
+  {% for post in topPosts %}
   <div class="col-md-8 mt-3">
     <div class="row g-0 rounded overflow-hidden flex-md-row mb-4 shadow h-md-250 position-relative">
       <div class="col p-4 d-flex flex-column position-static">
-        <strong class="d-inline-block mb-2 text-primary-emphasis">World</strong>
-        <h3 class="mb-0">Featured post</h3>
-        <div class="mb-1 text-body-secondary">Nov 12</div>
-        <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional
-          content.</p>
-        <a href="#" class="icon-link gap-1 icon-link-hover stretched-link">
+        <span>Written by - <strong class="d-inline-block mb-2 text-primary-emphasis">{{post.author}}</strong>
+        <h3 class="mb-0">{{post.title}}</h3>
+        <div class="mb-1 text-body-secondary">{{post.timeStamp}}</div>
+        <p class="card-text mb-auto"><div class='preview'>{{post.content|truncatechars:90}}..</div></p>
+        <a href="/blog/{{post.slug}}" class="icon-link gap-1 icon-link-hover stretched-link">
           Continue reading
           <svg class="bi">
             <use xlink:href="#chevron-right"></use>
@@ -43,7 +43,16 @@
       </div>
     </div>
   </div>
+  {% endfor %}
 
 </div>
 
 {% endblock body %}
+{% block js %}
+    <script>
+        let previews = document.getElementsByClassName('preview')
+        Array.from(previews).forEach(element=>{
+            element.innerHTML = lement.innerText;
+        })
+    </script>
+{% endblock js %}
