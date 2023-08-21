@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 from .models import Post,BlogComment
 from django.contrib import messages
 from blog.templatetags import getDict
+from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 def blogHome(request):
     allPosts = Post.objects.all()
@@ -44,3 +47,13 @@ def postComment(request):
             return redirect(f'/blog/{post.slug}')
         comm.save()
         return redirect(f'/blog/{post.slug}')
+
+def createBlog(request):
+    if request.method == 'POST':
+        blog = request.POST.get('blog')
+        title = request.POST.get('title')
+        user = request.user 
+
+        post = Post.objects.create(author=user,title=title,content=blog,slug=title,timeStamp = timezone.now())
+
+    return render(request,'blog/createBlog.html')

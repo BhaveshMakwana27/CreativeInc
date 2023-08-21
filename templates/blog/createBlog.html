@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Blog{% endblock title %}
+{% block body %}
+    <div class='container mt-2'>
+        <form action="/blog/createblog/" method="post"> {% csrf_token %}
+            <div class='row'>
+                <input type="text" name='title' id='title' class='form-control' placeholder='Enter Blog Title' required>
+            </div>
+            <div class='row mt-2'>
+                <textarea name='blog' id='blog' class='mt-5' placeholder='Blog Content' required>
+                </textarea>
+            </div>
+            <button class='btn btn-success mt-2' type="submit">Submit</button>
+        </form>
+    </div>
+
+{% endblock body %}
+{% block js %}
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+          { value: 'First.Name', title: 'First Name' },
+          { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+      });
+</script>
+{% endblock js %}
